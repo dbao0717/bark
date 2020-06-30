@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from barks.views import home_view, bark_detail_view
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home_view),
+    path('barks/<int:bark_id>', bark_detail_view),
 ]
