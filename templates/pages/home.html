@@ -6,4 +6,58 @@ Head Title Test!
 
 {% block content %}
 Welcome to Bark
+
+<div id = 'barks'>
+    Loading...
+</div>
+
+<script>
+    const barksElement = document.getElementById("barks") // Get HTML element
+    // barksElement.innerHTML = 'Loading...' // Set HTML in element
+
+    // var el1 ="<h1>Hi there 1</h1>"
+    // var el2 ="<h1>Hi there 2</h1>"
+    // var el3 ="<h1>Hi there 3</h1>"
+    // barksElement.innerHTML = el1 + el2 + el3
+
+    const xhr = new XMLHttpRequest()
+    const method = 'GET'
+    const url = "/barks"
+    const responseType = "json"
+
+    function handleDidLike(bark_id, currentCount) {
+        console.log(bark_id, currentCount)
+    }
+
+    function likeBtn(bark) {
+        return "<button class = 'btn btn-primary btn-sm' onclick = handleDidLike(" + bark.id + ","+ bark.likes + ")>" + bark.likes + " Likes </button>"
+    }
+
+    function formatBarkElement(bark) {
+        var formattedBark = "<div class = 'mb-4 bark' id = bark-'" + bark.id 
+        + "'><p>" + bark.content 
+            + "</p><div class = 'btn-group'>" + likeBtn(bark)
+            + "</div></div>"
+        return formattedBark
+    }
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function() {
+        console.log(xhr.response)
+        const serverResponse = xhr.response
+        var listedItems = serverResponse.response
+        var finalBarkStr = ""
+        var i;
+        for(i = 0; i < listedItems.length; ++i) {
+            var barkObj = listedItems[i]
+            var currentItem = formatBarkElement(barkObj)
+            finalBarkStr += currentItem
+        }
+        barksElement.innerHTML = finalBarkStr
+        
+    }
+    xhr.send()
+</script>
+
 {% endblock content %}
