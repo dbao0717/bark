@@ -14,3 +14,4 @@
         - Text
     - Deletion
     - Rebarking
+    - Liking

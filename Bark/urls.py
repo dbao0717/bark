@@ -16,11 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from barks.views import home_view, bark_detail_view, bark_list_view
+from barks.views import (
+    home_view, bark_detail_view, bark_list_view, 
+    bark_create_view,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view),
+    path('create-bark', bark_create_view),
     path('barks', bark_list_view),
     path('barks/<int:bark_id>', bark_detail_view),
 ]
