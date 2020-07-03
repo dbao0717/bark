@@ -19,7 +19,7 @@ def bark_list_view(request, *args, **kwargs):
     Return json data
     """
     qs = Bark.objects.all()
-    barks_list = [{"id": x.id, "content": x.content, "likes": random.randint(0, 1000)} for x in qs]
+    barks_list = [x.serialize() for x in qs]
     data = {
         "isUser": False,
         "response": barks_list
@@ -29,10 +29,11 @@ def bark_list_view(request, *args, **kwargs):
 def bark_create_view(request, *args, **kwargs):
     form = BarkForm(request.POST or None)
     next_url = request.POST.get("next") or None
-    print("next_url", next_url)
     if form.is_valid():
         obj = form.save(commit = False)
         obj.save()
+        if request.is_ajax():
+            return JsonResponse(obj.serialize(), status = 201)
         if next_url != None and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         form = BarkForm()

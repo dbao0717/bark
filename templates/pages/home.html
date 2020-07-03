@@ -14,10 +14,10 @@ Head Title Test!
 
 <div class = 'row mb-3'>
     <div class = 'col-md-4 mx-auto col-10'>
-        <form class = 'form' method = 'POST' action = '/create-bark'>
+        <form class = 'form' id = 'bark-create-form' method = 'POST' action = '/create-bark'>
             {% csrf_token %}
             <input type = 'hidden' value = '/' name = 'next' />
-            <textarea class = 'form-control' name = 'content' placeholder = 'Your bark...'></textarea>
+            <textarea required = 'requred' class = 'form-control' name = 'content' placeholder = 'Your bark...'></textarea>
             <button type = 'submit' class = 'btn btn-primary'> Bark </button>
 
         </form>
@@ -29,18 +29,59 @@ Head Title Test!
 </div>
 
 <script>
-    const barksElement = document.getElementById("barks") // Get HTML element
-    // barksElement.innerHTML = 'Loading...' // Set HTML in element
+    function handleBarkCreateFormDidSubmit(event) {
+        event.preventDefault()
+        const myForm = event.target
+        const myFormData = new FormData(myForm)
+        const url = myForm.getAttribute("action")
+        const method = myForm.getAttribute("method")
+        const xhr = new XMLHttpRequest()
+        const responseType = "json"
+        xhr.responseType = responseType
+        xhr.open(method, url)
+        xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+        xhr.onload = function() {
+            if(xhr.status === 201) {
+                const newBark = xhr.response
+                const newBarkElement = formatBarkElement(newBark)
+                // Set newest tweets first
+                const ogHtml = barksContainerElement.innerHTML
+                barksContainerElement.innerHTML = newBarkElement + ogHtml
+                myForm.reset()
+            }
+        }
+        xhr.send(myFormData)
+    }
 
-    // var el1 ="<h1>Hi there 1</h1>"
-    // var el2 ="<h1>Hi there 2</h1>"
-    // var el3 ="<h1>Hi there 3</h1>"
-    // barksElement.innerHTML = el1 + el2 + el3
+    const barkCreateFormEl = document.getElementById("bark-create-form")
+    barkCreateFormEl.addEventListener("submit", handleBarkCreateFormDidSubmit)
 
-    const xhr = new XMLHttpRequest()
-    const method = 'GET'
-    const url = "/barks"
-    const responseType = "json"
+    const barksContainerElement = document.getElementById("barks") // Get HTML element
+
+    function loadBarks(barksElement) {
+        const xhr = new XMLHttpRequest()
+        const method = 'GET'
+        const url = "/barks"
+        const responseType = "json"
+        xhr.responseType = responseType
+        xhr.open(method, url)
+        xhr.onload = function() {
+            const serverResponse = xhr.response
+            var listedItems = serverResponse.response
+            var finalBarkStr = ""
+            var i;
+            for(i = 0; i < listedItems.length; ++i) {
+                var barkObj = listedItems[i]
+                var currentItem = formatBarkElement(barkObj)
+                finalBarkStr += currentItem
+            }
+            barksElement.innerHTML = finalBarkStr
+        }
+        xhr.send()
+    }
+
+    loadBarks(barksContainerElement)
 
     function handleDidLike(bark_id, currentCount) {
         console.log(bark_id, currentCount)
@@ -58,23 +99,7 @@ Head Title Test!
         return formattedBark
     }
 
-    xhr.responseType = responseType
-    xhr.open(method, url)
-    xhr.onload = function() {
-        console.log(xhr.response)
-        const serverResponse = xhr.response
-        var listedItems = serverResponse.response
-        var finalBarkStr = ""
-        var i;
-        for(i = 0; i < listedItems.length; ++i) {
-            var barkObj = listedItems[i]
-            var currentItem = formatBarkElement(barkObj)
-            finalBarkStr += currentItem
-        }
-        barksElement.innerHTML = finalBarkStr
-        
-    }
-    xhr.send()
+
 </script>
 
 {% endblock content %}
