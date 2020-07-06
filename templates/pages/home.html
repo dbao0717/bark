@@ -16,6 +16,7 @@ Head Title Test!
     <div class = 'col-md-4 mx-auto col-10'>
         <form class = 'form' id = 'bark-create-form' method = 'POST' action = '/create-bark'>
             {% csrf_token %}
+            <div class = 'd-none alert alert-danger' id = 'bark-create-form-error'></div>
             <input type = 'hidden' value = '/' name = 'next' />
             <textarea required = 'requred' class = 'form-control' name = 'content' placeholder = 'Your bark...'></textarea>
             <button type = 'submit' class = 'btn btn-primary'> Bark </button>
@@ -29,6 +30,18 @@ Head Title Test!
 </div>
 
 <script>
+    function handleBarkFormError(msg, display) {
+        var myErrorDiv = document.getElementById("bark-create-form-error")
+        // Show error
+        if( display === true) {
+            myErrorDiv.setAttribute("class", "d-block alert alert-danger")
+            myErrorDiv.innerText = msg
+        // Hide Error
+        } else {
+            myErrorDiv.setAttribute("class", "d-none alert alert-danger")
+        }
+    }
+
     function handleBarkCreateFormDidSubmit(event) {
         event.preventDefault()
         const myForm = event.target
@@ -43,13 +56,31 @@ Head Title Test!
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
         xhr.onload = function() {
             if(xhr.status === 201) {
+                handleBarkFormError("", false)
                 const newBark = xhr.response
                 const newBarkElement = formatBarkElement(newBark)
                 // Set newest tweets first
                 const ogHtml = barksContainerElement.innerHTML
                 barksContainerElement.innerHTML = newBarkElement + ogHtml
                 myForm.reset()
+            } else if (xhr.status === 400) {
+                const errorJson = xhr.response
+                const contentError = errorJson.content
+                let contentErrorMsg;
+                if(contentError) {
+                    contentErrorMsg = contentError[0]
+                    if(contentErrorMsg) {
+                        handleBarkFormError(contentErrorMsg, true)
+                    }
+                } else {
+                    alert("An error has occurred. Please try again.")
+                }
+            } else if (xhr.status === 500) {
+                alert("There was an interval server error. Please try again.")
             }
+        }
+        xhr.onerror = function() {
+            alert("An error has occurred. Please try again later.")
         }
         xhr.send(myFormData)
     }
