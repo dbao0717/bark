@@ -1,7 +1,8 @@
 from django import forms
 from .models import Bark
+from django.conf import settings
 
-MAX_BARK_LENGTH = 240
+MAX_BARK_LENGTH = settings.MAX_BARK_LENGTH
 
 class BarkForm(forms.ModelForm):
     class Meta:

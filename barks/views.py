@@ -3,8 +3,14 @@ from django.conf import settings
 from django.http import HttpResponse, Http404, JsonResponse
 from django.utils.http import is_safe_url
 
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
 from .models import Bark
 from .forms import BarkForm
+from .serializers import BarkSerializer
 import random
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
@@ -12,21 +18,32 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context = {}, status = 200)
 
-def bark_list_view(request, *args, **kwargs):
-    """
-    Rest API View
-    Consume by JavaScript/Swift/Java/iOS/Android
-    Return json data
-    """
-    qs = Bark.objects.all()
-    barks_list = [x.serialize() for x in qs]
-    data = {
-        "isUser": False,
-        "response": barks_list
-    }
-    return JsonResponse(data)
-
+@api_view(['POST']) # HTTP method from client == POST
+# @authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
 def bark_create_view(request, *args, **kwargs):
+    serializer = BarkSerializer(data = request.POST)
+    if serializer.is_valid(raise_exception = True):
+        serializer.save(user = request.user)
+        return Response(serializer.data, status = 201)
+    return Response({}, status = 400)
+
+@api_view(['GET'])
+def bark_list_view(request, *args, **kwargs):
+    qs = Bark.objects.all()
+    serializer = BarkSerializer(qs, many = True)
+    return Response(serializer.data, status = 200)
+
+@api_view(['GET'])
+def bark_detail_view(request, bark_id, *args, **kwargs):
+    qs = Bark.objects.filter(id = bark_id)
+    if not qs.exists():
+        return Response({}, status = 404)
+    obj = qs.first()
+    serializer = BarkSerializer(obj)
+    return Response(serializer.data, status = 200)
+
+def bark_create_view_pure_django(request, *args, **kwargs):
     user = request.user
     if not request.user.is_authenticated:
         user = None
@@ -49,7 +66,21 @@ def bark_create_view(request, *args, **kwargs):
             return JsonResponse(form.errors, status = 400)
     return render(request, 'components/form.html', context = {"form": form})
 
-def bark_detail_view(request, bark_id, *args, **kwargs):
+def bark_list_view_pure_django(request, *args, **kwargs):
+    """
+    Rest API View
+    Consume by JavaScript/Swift/Java/iOS/Android
+    Return json data
+    """
+    qs = Bark.objects.all()
+    barks_list = [x.serialize() for x in qs]
+    data = {
+        "isUser": False,
+        "response": barks_list
+    }
+    return JsonResponse(data)
+
+def bark_detail_view_pure_django(request, bark_id, *args, **kwargs):
     """
     Rest API View
     Consume by JavaScript/Swift/Java/iOS/Android

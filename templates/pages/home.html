@@ -75,7 +75,14 @@ Head Title Test!
                 } else {
                     alert("An error has occurred. Please try again.")
                 }
-            } else if (xhr.status === 500) {
+            } else if (xhr.status == 401) {
+                alert("Please log in.")
+                window.location.href = "/login"
+            } else if (xhr.status === 403) {
+                alert("Please log in.")
+                window.location.href = "/login"
+            } 
+            else if (xhr.status === 500) {
                 alert("There was an interval server error. Please try again.")
             }
         }
@@ -99,7 +106,7 @@ Head Title Test!
         xhr.open(method, url)
         xhr.onload = function() {
             const serverResponse = xhr.response
-            var listedItems = serverResponse.response
+            const listedItems = serverResponse
             var finalBarkStr = ""
             var i;
             for(i = 0; i < listedItems.length; ++i) {
