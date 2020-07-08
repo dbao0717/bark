@@ -43,6 +43,19 @@ def bark_detail_view(request, bark_id, *args, **kwargs):
     serializer = BarkSerializer(obj)
     return Response(serializer.data, status = 200)
 
+@api_view(['DELETE', 'POST'])
+@permission_classes([IsAuthenticated])
+def bark_delete_view(request, bark_id, *args, **kwargs):
+    qs = Bark.objects.filter(id = bark_id)
+    if not qs.exists():
+        return Response({}, status = 404)
+    qs = qs.filter(user = request.user)
+    if not qs.exists():
+        return Response({"message": "You cannot delete this tweet"}, status = 401)
+    obj = qs.first()
+    obj.delete()
+    return Response({"message": "Bark has been deleted"}, status = 200)
+
 def bark_create_view_pure_django(request, *args, **kwargs):
     user = request.user
     if not request.user.is_authenticated:
