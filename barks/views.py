@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Bark
 from .forms import BarkForm
-from .serializers import BarkSerializer
+from .serializers import BarkSerializer, BarkActionSerializer
 import random
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
@@ -51,10 +51,38 @@ def bark_delete_view(request, bark_id, *args, **kwargs):
         return Response({}, status = 404)
     qs = qs.filter(user = request.user)
     if not qs.exists():
-        return Response({"message": "You cannot delete this tweet"}, status = 401)
+        return Response({"message": "You cannot delete this bark"}, status = 401)
     obj = qs.first()
     obj.delete()
     return Response({"message": "Bark has been deleted"}, status = 200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def bark_action_view(request, *args, **kwargs):
+    '''
+    ID required
+    Options: like, unlike, rebark
+    '''
+    print(request.POST, request.data)
+    serializer = BarkActionSerializer(data = request.data)
+    if (serializer.is_valid(raise_exception = True)):
+        data = serializer.validated_data
+        bark_id = data.get("id")
+        action = data.get("action")
+        qs = Bark.objects.filter(id = bark_id)
+        if not qs.exists():
+            return Response({}, status = 404)
+        obj = qs.first()
+        if action == "like":
+            obj.likes.add(request.user)
+            serializer = BarkSerializer(obj)
+            return Response(serializer.data, status = 200)
+        elif action == "unlike":
+            obj.likes.remove(request.user)
+        elif action == "rebark":
+            # todo
+            pass
+    return Response({}, status = 200)
 
 def bark_create_view_pure_django(request, *args, **kwargs):
     user = request.user

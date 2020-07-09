@@ -18,7 +18,7 @@ from django.urls import path
 
 from barks.views import (
     home_view, bark_detail_view, bark_list_view, 
-    bark_create_view, bark_delete_view,
+    bark_create_view, bark_delete_view, bark_action_view,
 )
 
 urlpatterns = [
@@ -28,4 +28,5 @@ urlpatterns = [
     path('barks', bark_list_view),
     path('barks/<int:bark_id>', bark_detail_view),
     path('api/barks/<int:bark_id>/delete', bark_delete_view),
+    path('api/barks/action', bark_action_view),
 ]

@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1']
 LOGIN_URL = "/login"
 MAX_BARK_LENGTH = 240
+BARK_ACTION_OPTIONS = ["like", "unlike", "rebark"]
 
 # Application definition
 
