@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Bark
 from .forms import BarkForm
-from .serializers import BarkSerializer, BarkActionSerializer
+from .serializers import BarkSerializer, BarkActionSerializer, BarkCreateSerializer
 import random
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
@@ -22,7 +22,7 @@ def home_view(request, *args, **kwargs):
 # @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def bark_create_view(request, *args, **kwargs):
-    serializer = BarkSerializer(data = request.POST)
+    serializer = BarkCreateSerializer(data = request.POST)
     if serializer.is_valid(raise_exception = True):
         serializer.save(user = request.user)
         return Response(serializer.data, status = 201)
@@ -69,6 +69,7 @@ def bark_action_view(request, *args, **kwargs):
         data = serializer.validated_data
         bark_id = data.get("id")
         action = data.get("action")
+        content = data.get("content")
         qs = Bark.objects.filter(id = bark_id)
         if not qs.exists():
             return Response({}, status = 404)
@@ -80,8 +81,9 @@ def bark_action_view(request, *args, **kwargs):
         elif action == "unlike":
             obj.likes.remove(request.user)
         elif action == "rebark":
-            # todo
-            pass
+            new_bark = Bark.objects.create(user = request.user, parent = obj, content = content)
+            serializer = BarkSerializer(new_bark)
+            return Response(serializer.data, status = 200)
     return Response({}, status = 200)
 
 def bark_create_view_pure_django(request, *args, **kwargs):

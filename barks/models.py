@@ -11,6 +11,7 @@ class BarkLike(models.Model):
 
 class Bark(models.Model):
     # id = models.AutoField(primary_key = True)
+    parent = models.ForeignKey("self", null = True, on_delete = models.SET_NULL)
     user = models.ForeignKey(User, on_delete = models.CASCADE) # Many barks to one user
     content = models.TextField(blank = True, null = True)
     image = models.FileField(upload_to='images/', blank = True, null = True)
@@ -23,9 +24,6 @@ class Bark(models.Model):
     class Meta:
         ordering = ['-id']
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "content": self.content,
-            "likes": random.randint(0, 1000)
-        }
+    @property
+    def is_rebark(self):
+        return self.parent != None

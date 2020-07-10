@@ -169,7 +169,7 @@ Head Title Test!
     }
 
     function rebarkBtn(bark) {
-        return "<button class = 'btn btn-outline-success btn-sm' onclick = handleBarkActionBtn" + bark.id + ","+ bark.likes + ",'rebark')> Rebark </button>"
+        return "<button class = 'btn btn-outline-success btn-sm' onclick = handleBarkActionBtn(" + bark.id + ","+ bark.likes + ",'rebark')> Rebark </button>"
     }
 
     function formatBarkElement(bark) {
