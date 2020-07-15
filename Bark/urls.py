@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path, include
 
 from barks.views import (
     home_view, bark_detail_view, bark_list_view, 
@@ -29,4 +29,5 @@ urlpatterns = [
     path('barks/<int:bark_id>', bark_detail_view),
     path('api/barks/<int:bark_id>/delete', bark_delete_view),
     path('api/barks/action', bark_action_view),
+    path('api/barks/', include('barks.urls'))
 ]

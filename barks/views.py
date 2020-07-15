@@ -80,10 +80,12 @@ def bark_action_view(request, *args, **kwargs):
             return Response(serializer.data, status = 200)
         elif action == "unlike":
             obj.likes.remove(request.user)
+            serializer = BarkSerializer(obj)
+            return Response(serializer.data, status = 200)
         elif action == "rebark":
             new_bark = Bark.objects.create(user = request.user, parent = obj, content = content)
             serializer = BarkSerializer(new_bark)
-            return Response(serializer.data, status = 200)
+            return Response(serializer.data, status = 201)
     return Response({}, status = 200)
 
 def bark_create_view_pure_django(request, *args, **kwargs):
