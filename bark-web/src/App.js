@@ -2,7 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import {BarksList} from './barks'
+import {BarksComponent} from './barks'
 
 function App() {
   
@@ -14,7 +14,7 @@ function App() {
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <div>
-          <BarksList />
+          <BarksComponent />
         </div>
         <a
           className="App-link"

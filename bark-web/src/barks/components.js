@@ -1,14 +1,49 @@
 import React , {useEffect, useState} from 'react'
 
 import {loadBarks} from '../lookup'
-  
-export function BarksList(props) {
-    const [barks, setBarks] = useState([])
 
+export function BarksComponent(props) {
+    const textAreaRef = React.createRef()
+    const [newBarks, setNewBarks] = useState([])
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        const newVal = textAreaRef.current.value
+        let tempNewBarks = [...newBarks]
+        tempNewBarks.unshift({
+            content: newVal,
+            likes: 0,
+            id: 123
+        })
+        setNewBarks(tempNewBarks)
+        textAreaRef.current.value = ''
+    }
+    return <div className = {props.className}>
+        <div className = 'col-12 mb-3'>
+            <form onSubmit = {handleSubmit}>
+                <textarea ref = {textAreaRef} required = {true} className = 'form-control' name = 'tweet'>
+
+                </textarea>
+                <button type = 'submit' className = 'btn btn-primary my-3'>Bark</button>
+            </form>
+        </div>
+        <BarksList newBarks = {newBarks}/>
+    </div>
+    
+}
+
+export function BarksList(props) {
+    const [barksInit, setBarksInit] = useState([])
+    const [barks, setBarks] = useState([])
+    useEffect(() => {
+        const final = [...props.newBarks].concat(barksInit)
+        if(final.length !== barks.length) {
+            setBarks(final)
+        }
+    }, [props.newBarks, barks, barksInit])
     useEffect(() => {
         const myCallback =  (response, status) => {
         if(status === 200) {
-            setBarks(response)
+            setBarksInit(response)
         } else {
             alert("There was an error")
         }

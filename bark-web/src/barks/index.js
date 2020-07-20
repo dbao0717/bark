@@ -1,7 +1,8 @@
-import {ActionBtn, Bark, BarksList} from './components'
+import {ActionBtn, Bark, BarksList, BarksComponent} from './components'
 
 export {
     ActionBtn,
     Bark,
     BarksList,
+    BarksComponent,
 }
