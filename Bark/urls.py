@@ -27,7 +27,7 @@ from barks.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view),
-    path('react/', TemplateView.as_view(template_name = 'react.html')),
+    path('react/', TemplateView.as_view(template_name = 'react_via_dj.html')),
     path('create-bark', bark_create_view),
     path('barks', bark_list_view),
     path('barks/<int:bark_id>', bark_detail_view),

@@ -1,5 +1,5 @@
-import {loadBarks} from './components'
+import {backEndLookup} from './components'
 
 export {
-    loadBarks,
+    backEndLookup
 }

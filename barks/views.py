@@ -22,7 +22,7 @@ def home_view(request, *args, **kwargs):
 # @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def bark_create_view(request, *args, **kwargs):
-    serializer = BarkCreateSerializer(data = request.POST)
+    serializer = BarkCreateSerializer(data = request.data)
     if serializer.is_valid(raise_exception = True):
         serializer.save(user = request.user)
         return Response(serializer.data, status = 201)

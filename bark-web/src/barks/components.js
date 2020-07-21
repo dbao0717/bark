@@ -1,20 +1,24 @@
 import React , {useEffect, useState} from 'react'
 
-import {loadBarks} from '../lookup'
+import {apiBarkCreate, apiBarkList} from './lookup'
 
 export function BarksComponent(props) {
     const textAreaRef = React.createRef()
     const [newBarks, setNewBarks] = useState([])
+    const handleBackEndUpdate = (response, status) => {
+        let tempNewBarks = [...newBarks]
+        if(status === 201) {
+            setNewBarks(tempNewBarks)
+            tempNewBarks.unshift(response)
+        } else {
+            console.log(response)
+            alert("An error has occurred. Please try again.")
+        }
+    }
     const handleSubmit = (event) => {
         event.preventDefault()
         const newVal = textAreaRef.current.value
-        let tempNewBarks = [...newBarks]
-        tempNewBarks.unshift({
-            content: newVal,
-            likes: 0,
-            id: 123
-        })
-        setNewBarks(tempNewBarks)
+        apiBarkCreate(newVal, handleBackEndUpdate)
         textAreaRef.current.value = ''
     }
     return <div className = {props.className}>
@@ -34,6 +38,7 @@ export function BarksComponent(props) {
 export function BarksList(props) {
     const [barksInit, setBarksInit] = useState([])
     const [barks, setBarks] = useState([])
+    const [barksDidSet, setBarksDidSet] = useState(false)
     useEffect(() => {
         const final = [...props.newBarks].concat(barksInit)
         if(final.length !== barks.length) {
@@ -41,15 +46,18 @@ export function BarksList(props) {
         }
     }, [props.newBarks, barks, barksInit])
     useEffect(() => {
-        const myCallback =  (response, status) => {
-        if(status === 200) {
-            setBarksInit(response)
-        } else {
-            alert("There was an error")
+        if(barksDidSet === false) {
+            const handleBarkListLookup =  (response, status) => {
+                if(status === 200) {
+                    setBarksInit(response)
+                    setBarksDidSet(true)
+                } else {
+                    alert("There was an error")
+                }
+            }
+            apiBarkList(handleBarkListLookup)
         }
-        }
-        loadBarks(myCallback)
-    }, [])
+    }, [barksInit, barksDidSet, setBarksDidSet])
     return barks.map((item, index)=>{
         return <Bark bark = {item} className = 'my-5 py-5 border bg-white text-dark' key = {`${index}-{item.id}`}/>
     })
