@@ -10,9 +10,11 @@ if(appEl) {
   ReactDOM.render(<App />, appEl)
 }
 
+const e = React.createElement
+
 const barksEl = document.getElementById("idBark")
 if(barksEl) {
-  ReactDOM.render(<BarksComponent />, barksEl)
+  ReactDOM.render(e(BarksComponent, barksEl.dataset), barksEl)
 }
 
 // If you want your app to work offline and load faster, you can change

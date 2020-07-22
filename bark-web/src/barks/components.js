@@ -1,6 +1,6 @@
 import React , {useEffect, useState} from 'react'
 
-import {apiBarkCreate, apiBarkList} from './lookup'
+import {apiBarkCreate, apiBarkAction, apiBarkList} from './lookup'
 
 export function BarksComponent(props) {
     const textAreaRef = React.createRef()
@@ -58,42 +58,77 @@ export function BarksList(props) {
             apiBarkList(handleBarkListLookup)
         }
     }, [barksInit, barksDidSet, setBarksDidSet])
+
+    const handleDidRebark = (newBark) => {
+        const updateBarksInit = [...barksInit]
+        updateBarksInit.unshift(newBark)
+        setBarksInit(updateBarksInit)
+        const updateFinalBarks = [...barks]
+        updateFinalBarks.unshift(barks)
+        setBarks(updateFinalBarks)
+    }
     return barks.map((item, index)=>{
-        return <Bark bark = {item} className = 'my-5 py-5 border bg-white text-dark' key = {`${index}-{item.id}`}/>
+        return <Bark 
+        bark = {item}
+        didRebark = {handleDidRebark} 
+        className = 'my-5 py-5 border bg-white text-dark' 
+        key = {`${index}-{item.id}`}/>
     })
 }
 
 export function ActionBtn(props) {
-    const {bark, action} = props
-    const [likes, setLikes] = useState(bark.likes ? bark.likes : 0)
-    const [userLike, setUserLike] = useState(bark.userLike === true ? true : false)
+    const {bark, action, didPerformAction} = props
+    const likes = bark.likes ? bark.likes : 0
     const className = props.className ? props.className : 'btn btn-primary btn-sm'
     const actionDisplay = action.display ? action.display : 'Action'
+    const handleActionBackEndEvent = (response, status) => {
+        console.log(response, status)
+        if((status === 200 || status === 201) && didPerformAction) {
+            didPerformAction(response, status)
+        }
+    }
     const handleClick = (event) => {
         event.preventDefault()
-        if(action.type === 'like') {
-            if(userLike === true) {
-                setLikes(likes - 1)
-                setUserLike(false)
-            } else {
-                setLikes(likes + 1)
-                setUserLike(true)
-            }
-        }
+        apiBarkAction(bark.id, action.type, handleActionBackEndEvent)
     }
     const display = action.type === 'like' ? `${likes} ${actionDisplay}` : actionDisplay
     return <button className = {className} onClick = {handleClick}>{display}</button>
   }
-  
+
+export function ParentBark(props) {
+    const {bark} = props
+    return bark.parent ? <div className = 'row'>
+        <div className = 'col-11 mx-auto p-3 border rounded'>
+            <p className = 'mb-0 text-muted small'>Rebark</p>
+            <Bark hideActions className = {' '} bark = {bark.parent} />
+        </div>
+    </div> : null
+}
+
 export function Bark(props) {
-const {bark} = props
-const className = props.className ? props.className : 'col-10 mx-auto col-md-6'
-return <div className={className}>
-    <p>{bark.id} - {bark.content}</p>
-    <div className='btn btn-group'>
-    <ActionBtn bark = {bark} action={{type: "like", display:"Likes"}}/>
-    <ActionBtn bark = {bark} action={{type: "unlike", display:"Unlike"}}/>
-    <ActionBtn bark = {bark} action={{type: "rebark", display:"Rebark"}}/>
+    const {bark, didRebark, hideActions} = props
+    const [actionBark, setActionBark] = useState(props.bark ? props.bark : null)
+    const className = props.className ? props.className : 'col-10 mx-auto col-md-6'
+
+    const handlePerformAction = (newActionBark, status) => {
+        if(status === 200) {
+            setActionBark(newActionBark)
+        } else if (status === 201) {
+            if(didRebark) {
+                didRebark(newActionBark)
+            }
+        }
+    }
+
+    return <div className={className}>
+        <div>
+            <p>{bark.id} - {bark.content}</p>
+            <ParentBark bark = {bark} />
+        </div>
+        {(actionBark && hideActions !== true) && <div className='btn btn-group'>
+            <ActionBtn bark = {actionBark} didPerformAction = {handlePerformAction} action={{type: "like", display:"Likes"}}/>
+            <ActionBtn bark = {actionBark} didPerformAction = {handlePerformAction} action={{type: "unlike", display:"Unlike"}}/>
+            <ActionBtn bark = {actionBark} didPerformAction = {handlePerformAction} action={{type: "rebark", display:"Rebark"}}/>
+        </div>}
     </div>
-</div>
 }
