@@ -30,7 +30,8 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="idBark" data-username = "daniel" data-valid = "true"></div>
+    <div id = 'bark-container'></div>
+    <div id = "idBark" data-username = "daniel" data-can-bark = "false"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -41,5 +42,18 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script>
+      var path = window.location.pathname
+      var idRegex = /(?<barkid>\d+)/
+      var match = path.match(idRegex)
+      if(match) {
+        var barkId = match.groups.barkid
+        var bEl = document.getElementById("idBark")
+        bEl.className = 'd-none'
+        // var barkEl = "<div class='bark-detail' data-bark-id =" + barkId + " data-class-name = 'col-6 mx-auto'></div>"
+        // document.getElementById("bark-container").innerHtml = barkEl
+        document.getElementById("bark-container").innerHTML = "<div class='bark-detail' data-bark-id =" + barkId + " data-class-name = 'col-6 mx-auto'></div>"
+      }
+    </script>
   </body>
 </html>

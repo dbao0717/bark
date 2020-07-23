@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import {BarksComponent} from './barks'
+import {BarksComponent, BarkDetailComponent} from './barks'
 import * as serviceWorker from './serviceWorker';
 
 const appEl = document.getElementById('root')
@@ -16,6 +16,12 @@ const barksEl = document.getElementById("idBark")
 if(barksEl) {
   ReactDOM.render(e(BarksComponent, barksEl.dataset), barksEl)
 }
+
+const barkDetailElements = document.querySelectorAll(".bark-detail")
+
+barkDetailElements.forEach(container => {
+  ReactDOM.render(e(BarkDetailComponent, container.dataset), container)
+})
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

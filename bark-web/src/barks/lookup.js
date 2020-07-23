@@ -11,6 +11,14 @@ export function apiBarkAction(barkId, action, callback) {
 
 }
 
-export function apiBarkList(callback) {
-    backEndLookup("GET", "/barks/", callback)
+export function apiBarkDetail(barkId, callback) {
+    backEndLookup("GET", `/barks/${barkId}`, callback)
+}
+
+export function apiBarkList(username, callback) {
+  let endpoint = "/barks/"
+  if(username) {
+      endpoint = `/barks/?username=${username}`
+  }
+    backEndLookup("GET", endpoint, callback)
 }
