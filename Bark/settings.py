@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'corsheaders',
     # internal
     'barks',
+    'accounts',
+    'profiles',
 ]
 
 MIDDLEWARE = [

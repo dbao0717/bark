@@ -17,9 +17,6 @@ def barks_list_view(request, *args, **kwargs):
 def barks_detail_view(request, bark_id, *args, **kwargs):
     return render(request, "barks/detail.html", context = {"bark_id": bark_id})
 
-def barks_profile_view(request, username, *args, **kwargs):
-    return render(request, "barks/profile.html", context = {"profile_username": username})
-
 # def bark_create_view_pure_django(request, *args, **kwargs):
 #     user = request.user
 #     if not request.user.is_authenticated:

@@ -19,16 +19,22 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 
+from accounts.views import (
+    login_view, logout_view, register_view
+)
+
 from barks.views import (
     barks_list_view, barks_detail_view,
-    barks_profile_view,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', barks_list_view),
+    path('login/', login_view),
+    path('logout/', logout_view),
+    path('register/', register_view),
     path('<int:bark_id>', barks_detail_view),
-    path('profile/<str:username>', barks_profile_view),
+    re_path(r'profiles?/', include('profiles.urls')),
     path('api/barks/', include('barks.api.urls'))
 ]
 
