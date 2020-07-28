@@ -35,7 +35,8 @@ urlpatterns = [
     path('register/', register_view),
     path('<int:bark_id>', barks_detail_view),
     re_path(r'profiles?/', include('profiles.urls')),
-    path('api/barks/', include('barks.api.urls'))
+    path('api/barks/', include('barks.api.urls')),
+    re_path(r'api/profiles?/', include('profiles.api.urls'))
 ]
 
 if settings.DEBUG:
