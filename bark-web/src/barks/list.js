@@ -5,6 +5,7 @@ import {Bark} from './detail'
 export function BarksList(props) {
     const [barksInit, setBarksInit] = useState([])
     const [barks, setBarks] = useState([])
+    const [nextUrl, setNextUrl] = useState(null)
     const [barksDidSet, setBarksDidSet] = useState(false)
     useEffect(() => {
         const final = [...props.newBarks].concat(barksInit)
@@ -16,7 +17,8 @@ export function BarksList(props) {
         if(barksDidSet === false) {
             const handleBarkListLookup =  (response, status) => {
                 if(status === 200) {
-                    setBarksInit(response)
+                    setNextUrl(response.next)
+                    setBarksInit(response.results)
                     setBarksDidSet(true)
                 } else {
                     alert("There was an error")
@@ -34,11 +36,31 @@ export function BarksList(props) {
         updateFinalBarks.unshift(barks)
         setBarks(updateFinalBarks)
     }
-    return barks.map((item, index)=>{
+
+    const handleLoadNext = (event) => {
+        event.preventDefault()
+        if(nextUrl !== null) {
+            const handleLoadNextResponse = (response, status) => {
+                if(status === 200) {
+                    setNextUrl(response.next)
+                    const newBarks = [...barks].concat(response.results)
+                    setBarksInit(newBarks)
+                    setBarks(newBarks)
+                } else {
+                    alert("There was an error")
+                }
+            }
+            apiBarkList(props.username, handleLoadNextResponse, nextUrl)
+        }
+    }
+
+    return <React.Fragment>{ barks.map((item, index)=>{
         return <Bark 
         bark = {item}
         didRebark = {handleDidRebark} 
         className = 'my-5 py-5 border bg-white text-dark' 
         key = {`${index}-{item.id}`}/>
-    })
+    })}
+    {nextUrl != null && <button onClick={handleLoadNext} classname='btn btn-outline-primary'>Next Page</button>}
+    </React.Fragment>
 }

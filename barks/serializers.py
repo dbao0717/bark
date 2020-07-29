@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Bark
 from django.conf import settings
+from .models import Bark
+from profiles.serializers import PublicProfileSerializer
 
 MAX_BARK_LENGTH = settings.MAX_BARK_LENGTH
 BARK_ACTION_OPTIONS = settings.BARK_ACTION_OPTIONS
@@ -17,10 +18,11 @@ class BarkActionSerializer(serializers.Serializer):
         return value
 
 class BarkCreateSerializer(serializers.ModelSerializer):
+    user = PublicProfileSerializer(source = 'user.profile', read_only = True)
     likes = serializers.SerializerMethodField(read_only = True)
     class Meta:
         model = Bark
-        fields = ['id', 'content', 'likes']
+        fields = ['user', 'id', 'content', 'likes', 'timestamp']
 
     def get_likes(self, obj):
         return obj.likes.count()
@@ -31,11 +33,12 @@ class BarkCreateSerializer(serializers.ModelSerializer):
         return value
 
 class BarkSerializer(serializers.ModelSerializer):
+    user = PublicProfileSerializer(source = 'user.profile', read_only = True)
     likes = serializers.SerializerMethodField(read_only = True)
     parent = BarkCreateSerializer(read_only = True)
     class Meta:
         model = Bark
-        fields = ['id', 'content', 'likes', 'is_rebark', 'parent']
+        fields = ['user', 'id', 'content', 'likes', 'is_rebark', 'parent', 'timestamp']
 
     def get_likes(self, obj):
         return obj.likes.count()

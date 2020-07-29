@@ -15,10 +15,13 @@ export function apiBarkDetail(barkId, callback) {
     backEndLookup("GET", `/barks/${barkId}`, callback)
 }
 
-export function apiBarkList(username, callback) {
+export function apiBarkList(username, callback, nextUrl) {
   let endpoint = "/barks/"
   if(username) {
       endpoint = `/barks/?username=${username}`
   }
-    backEndLookup("GET", endpoint, callback)
+  if(nextUrl !== null && nextUrl !== undefined) {
+    endpoint = nextUrl.replace("http://localhost:8000/api", "")
+  }
+  backEndLookup("GET", endpoint, callback)
 }
