@@ -1,4 +1,4 @@
-import {BarksComponent, BarkDetailComponent} from './components'
+import {FeedComponent, BarksComponent, BarkDetailComponent} from './components'
 import {Bark} from './detail'
 import {BarksList} from './list'
 import {ActionBtn} from './buttons'
@@ -10,5 +10,6 @@ export {
     BarksList,
     BarksComponent,
     BarkCreate,
-    BarkDetailComponent
+    BarkDetailComponent,
+    FeedComponent
 }

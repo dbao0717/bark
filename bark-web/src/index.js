@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import {BarksComponent, BarkDetailComponent} from './barks'
+import {FeedComponent, BarksComponent, BarkDetailComponent} from './barks'
 import * as serviceWorker from './serviceWorker';
 
 const appEl = document.getElementById('root')
@@ -15,6 +15,11 @@ const e = React.createElement
 const barksEl = document.getElementById("idBark")
 if(barksEl) {
   ReactDOM.render(e(BarksComponent, barksEl.dataset), barksEl)
+}
+
+const barkFeedEl = document.getElementById("idBark-feed")
+if(barkFeedEl) {
+  ReactDOM.render(e(FeedComponent, barkFeedEl.dataset), barkFeedEl)
 }
 
 const barkDetailElements = document.querySelectorAll(".bark-detail")

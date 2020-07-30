@@ -24,12 +24,13 @@ from accounts.views import (
 )
 
 from barks.views import (
-    barks_list_view, barks_detail_view,
+    home_view, barks_list_view, barks_detail_view,
 )
 
 urlpatterns = [
+    path('', home_view),
     path('admin/', admin.site.urls),
-    path('', barks_list_view),
+    path('global/', barks_list_view),
     path('login/', login_view),
     path('logout/', logout_view),
     path('register/', register_view),

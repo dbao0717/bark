@@ -1,8 +1,8 @@
 import React , {useEffect, useState} from 'react'
-import {apiBarkList} from './lookup'
+import {apiBarkFeed} from './lookup'
 import {Bark} from './detail'
 
-export function BarksList(props) {
+export function FeedList(props) {
     const [barksInit, setBarksInit] = useState([])
     const [barks, setBarks] = useState([])
     const [nextUrl, setNextUrl] = useState(null)
@@ -20,11 +20,9 @@ export function BarksList(props) {
                     setNextUrl(response.next)
                     setBarksInit(response.results)
                     setBarksDidSet(true)
-                } else {
-                    alert("There was an error")
                 }
             }
-            apiBarkList(props.username, handleBarkListLookup)
+            apiBarkFeed(handleBarkListLookup)
         }
     }, [barksInit, barksDidSet, setBarksDidSet, props.username])
 
@@ -46,11 +44,9 @@ export function BarksList(props) {
                     const newBarks = [...barks].concat(response.results)
                     setBarksInit(newBarks)
                     setBarks(newBarks)
-                } else {
-                    alert("There was an error")
                 }
             }
-            apiBarkList(props.username, handleLoadNextResponse, nextUrl)
+            apiBarkFeed(handleLoadNextResponse, nextUrl)
         }
     }
 

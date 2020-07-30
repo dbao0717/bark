@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+    <div id = 'idBark-feed'></div>
+{% else %}
+    <div id = 'idBark'></div>
+{% endif %}
+
+{% endblock content %}

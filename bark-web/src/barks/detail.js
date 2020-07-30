@@ -1,6 +1,7 @@
 import React , {useState} from 'react'
 import {ActionBtn} from './buttons'
 
+import {UserPicture, UserDisplay} from '../profiles'
 
 export function ParentBark(props) {
     const {bark} = props
@@ -31,19 +32,15 @@ export function Bark(props) {
     }
 
     return <div className={className}>
-        {isRebark === true && <div className='mb-2'> <span className='small text-muted'>Rebarked by @{rebarker.username}</span> </div>}
+        {isRebark === true && <div className='mb-2'> <span className='small text-muted'>Rebarked by <UserDisplay user={rebarker} /></span> </div>}
         <div className='d-flex'>
             <div className=''>
-                <span className='mx-1 px-3 py-2 rounded-circle bg-dark text-white'>
-                    {bark.user.username[0]}
-                </span>
+                <UserPicture user={bark.user} />
             </div>
             <div className= 'col-11'>
                 <div>
                     <p>
-                        {bark.user.first_name} {" "}
-                        {bark.user.last_name} {" "}
-                        @{bark.user.username}
+                        <UserDisplay includeFullName user={bark.user} />
                     </p>
                     <p>{bark.content}</p>
                     <ParentBark bark = {bark} rebarker={bark.user} />

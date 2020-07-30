@@ -16,6 +16,7 @@ import random
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 # Create your views here.
+
 @api_view(['POST']) # HTTP method from client == POST
 # @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])

@@ -1,8 +1,23 @@
 import React , {useState, useEffect} from 'react'
 import {BarksList} from './list'
+import {FeedList} from './feed'
 import {BarkCreate} from './create'
 import {apiBarkDetail} from './lookup'
 import {Bark} from './detail'
+
+export function FeedComponent(props) {
+    const [newBarks, setNewBarks] = useState([])
+    const canBark = props.canBark === "false" ? false : true
+    const handleNewBark = (newBark) => {
+        let tempNewBarks = [...newBarks]
+        setNewBarks(tempNewBarks)
+        tempNewBarks.unshift(newBark)
+    }
+    return <div className = {props.className}>
+        {canBark === true && <BarkCreate didBark = {handleNewBark} className = 'col-12 mb-3' />}
+        <FeedList newBarks = {newBarks} {...props}/>
+    </div>
+}
 
 export function BarksComponent(props) {
     const [newBarks, setNewBarks] = useState([])
